@@ -27,7 +27,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Check against environment variable
-    const adminPassword = process.env.ADMIN_PASSWORD || 'admin123';
+    const adminPassword = process.env.ADMIN_PASSWORD;
 
     if (password === adminPassword) {
       return NextResponse.json({ success: true });

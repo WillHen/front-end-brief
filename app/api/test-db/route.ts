@@ -4,7 +4,7 @@ import { getServiceSupabase } from '@/lib/supabase';
 export async function GET() {
   try {
     const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
-    
+
     return Response.json({
       hasKey: !!serviceKey,
       keyLength: serviceKey?.length,

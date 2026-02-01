@@ -424,7 +424,7 @@ export default function AdminPage() {
             All Newsletters
           </h2>
           <Link
-            href="/admin/new"
+            href='/admin/new'
             className='px-6 py-3 bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 rounded-lg font-medium hover:bg-zinc-800 dark:hover:bg-zinc-200'
           >
             Create New
