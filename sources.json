@@ -1,0 +1,173 @@
+{
+  "blogs": [
+    {
+      "name": "CSS-Tricks",
+      "url": "https://css-tricks.com",
+      "rss": "https://css-tricks.com/feed/",
+      "categories": ["CSS", "JavaScript", "Web Design"]
+    },
+    {
+      "name": "Smashing Magazine",
+      "url": "https://www.smashingmagazine.com",
+      "rss": "https://www.smashingmagazine.com/feed/",
+      "categories": ["CSS", "JavaScript", "UX", "Performance"]
+    },
+    {
+      "name": "Dev.to",
+      "url": "https://dev.to",
+      "rss": "https://dev.to/feed",
+      "categories": ["General", "JavaScript", "React", "Vue"]
+    },
+    {
+      "name": "JavaScript Weekly",
+      "url": "https://javascriptweekly.com",
+      "categories": ["JavaScript", "Node.js"]
+    },
+    {
+      "name": "React Status",
+      "url": "https://react.statuscode.com",
+      "categories": ["React", "JavaScript"]
+    },
+    {
+      "name": "A List Apart",
+      "url": "https://alistapart.com",
+      "rss": "https://alistapart.com/main/feed/",
+      "categories": ["Web Standards", "UX", "Content Strategy"]
+    },
+    {
+      "name": "web.dev",
+      "url": "https://web.dev",
+      "rss": "https://web.dev/feed.xml",
+      "categories": ["Performance", "PWA", "Best Practices", "SEO"]
+    },
+    {
+      "name": "Josh W Comeau's Blog",
+      "url": "https://www.joshwcomeau.com",
+      "rss": "https://www.joshwcomeau.com/rss.xml",
+      "categories": ["CSS", "React", "JavaScript", "Animations"]
+    },
+    {
+      "name": "Kent C. Dodds",
+      "url": "https://kentcdodds.com/blog",
+      "rss": "https://kentcdodds.com/blog/rss.xml",
+      "categories": ["React", "JavaScript", "Testing"]
+    },
+    {
+      "name": "Dan Abramov",
+      "url": "https://overreacted.io",
+      "rss": "https://overreacted.io/rss.xml",
+      "categories": ["React", "JavaScript"]
+    },
+    {
+      "name": "Lee Robinson",
+      "url": "https://leerob.io/blog",
+      "rss": "https://leerob.io/feed.xml",
+      "categories": ["Next.js", "React", "Vercel"]
+    },
+    {
+      "name": "Addy Osmani",
+      "url": "https://addyosmani.com/blog/",
+      "categories": ["Performance", "JavaScript", "Chrome"]
+    },
+    {
+      "name": "Modern CSS Solutions",
+      "url": "https://moderncss.dev",
+      "rss": "https://moderncss.dev/feed/",
+      "categories": ["CSS", "Modern CSS"]
+    },
+    {
+      "name": "CSS Weekly",
+      "url": "https://css-weekly.com",
+      "categories": ["CSS"]
+    },
+    {
+      "name": "Frontend Focus",
+      "url": "https://frontendfoc.us",
+      "categories": ["General", "HTML", "CSS", "JavaScript"]
+    },
+    {
+      "name": "The Verge Web3 Blog",
+      "url": "https://vercel.com/blog",
+      "rss": "https://vercel.com/blog/rss",
+      "categories": ["Next.js", "React", "Deployment"]
+    },
+    {
+      "name": "LogRocket Blog",
+      "url": "https://blog.logrocket.com",
+      "rss": "https://blog.logrocket.com/feed/",
+      "categories": ["JavaScript", "React", "Vue", "Performance"]
+    }
+  ],
+  "tools": [
+    {
+      "name": "GitHub Trending",
+      "url": "https://github.com/trending/javascript",
+      "categories": ["JavaScript", "Tools", "Libraries"]
+    },
+    {
+      "name": "Product Hunt",
+      "url": "https://www.producthunt.com/topics/developer-tools",
+      "categories": ["Tools", "Dev Tools"]
+    },
+    {
+      "name": "npm Trends",
+      "url": "https://npmtrends.com",
+      "categories": ["JavaScript", "Libraries", "npm"]
+    },
+    {
+      "name": "Best of JS",
+      "url": "https://bestofjs.org",
+      "categories": ["JavaScript", "Libraries", "Tools"]
+    },
+    {
+      "name": "Chrome for Developers",
+      "url": "https://developer.chrome.com",
+      "rss": "https://developer.chrome.com/feeds/blog.xml",
+      "categories": ["Browser", "Web APIs", "Performance"]
+    }
+  ],
+  "communities": [
+    {
+      "name": "Reddit - r/webdev",
+      "url": "https://www.reddit.com/r/webdev/",
+      "categories": ["General", "Discussion"]
+    },
+    {
+      "name": "Reddit - r/javascript",
+      "url": "https://www.reddit.com/r/javascript/",
+      "categories": ["JavaScript", "Discussion"]
+    },
+    {
+      "name": "Reddit - r/reactjs",
+      "url": "https://www.reddit.com/r/reactjs/",
+      "categories": ["React", "Discussion"]
+    },
+    {
+      "name": "Hacker News",
+      "url": "https://news.ycombinator.com",
+      "categories": ["General", "Tech News"]
+    }
+  ],
+  "documentation": [
+    {
+      "name": "MDN Web Docs",
+      "url": "https://developer.mozilla.org",
+      "categories": ["HTML", "CSS", "JavaScript", "Web APIs"]
+    },
+    {
+      "name": "Can I Use",
+      "url": "https://caniuse.com",
+      "categories": ["Browser Support", "CSS", "JavaScript"]
+    },
+    {
+      "name": "React Docs",
+      "url": "https://react.dev",
+      "categories": ["React", "Documentation"]
+    },
+    {
+      "name": "Next.js Docs",
+      "url": "https://nextjs.org/docs",
+      "categories": ["Next.js", "React", "Documentation"]
+    }
+  ]
+}
