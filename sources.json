@@ -59,6 +59,11 @@
       "categories": ["React", "JavaScript"]
     },
     {
+      "name": "Theo - t3.gg",
+      "url": "https://t3.gg/blog",
+      "categories": ["TypeScript", "React", "Next.js", "Web Development"]
+    },
+    {
       "name": "Lee Robinson",
       "url": "https://leerob.io/blog",
       "rss": "https://leerob.io/feed.xml",

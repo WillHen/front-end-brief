@@ -15,6 +15,11 @@ export default function NewNewsletterPage() {
     message: ''
   });
 
+  const truncateText = (text: string, maxLength: number = 350): string => {
+    if (text.length <= maxLength) return text;
+    return text.substring(0, maxLength).trim() + '...';
+  };
+
   const addSection = () => {
     setState((prev) => ({
       ...prev,
@@ -233,8 +238,8 @@ export default function NewNewsletterPage() {
                         {section.title || 'Untitled'}
                       </h3>
                       {section.description && (
-                        <p className='text-zinc-600 dark:text-zinc-400 mb-2'>
-                          {section.description}
+                        <p className='text-zinc-600 dark:text-zinc-400 mb-2 text-[15px] leading-[1.5]'>
+                          {truncateText(section.description)}
                         </p>
                       )}
                       {section.url && (

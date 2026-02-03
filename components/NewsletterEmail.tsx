@@ -22,6 +22,12 @@ export function NewsletterEmail({
   content,
   unsubscribeUrl
 }: NewsletterEmailProps) {
+  // Truncate long descriptions for better email readability
+  const truncateText = (text: string, maxLength: number = 350): string => {
+    if (text.length <= maxLength) return text;
+    return text.substring(0, maxLength).trim() + '...';
+  };
+
   return (
     <Html>
       <Head />
@@ -51,7 +57,7 @@ export function NewsletterEmail({
                     </Heading>
                     {section.description && (
                       <Text style={sectionDescription}>
-                        {section.description}
+                        {truncateText(section.description)}
                       </Text>
                     )}
                     {section.url && (
@@ -140,8 +146,8 @@ const sectionTitle = {
 
 const sectionDescription = {
   margin: '0 0 12px',
-  fontSize: '16px',
-  lineHeight: '1.6',
+  fontSize: '15px',
+  lineHeight: '1.5',
   color: '#52525b'
 };
 
