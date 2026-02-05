@@ -73,13 +73,15 @@ describe('Newsletter Subscription Flow', () => {
     const subscribeButton = screen.getByRole('button', { name: /subscribe/i });
 
     await user.type(emailInput, 'newuser2@example.com');
-    
+
     // Click and immediately check for disabled state
     const clickPromise = user.click(subscribeButton);
-    
+
     // Check loading state appears
     await waitFor(() => {
-      expect(screen.getByRole('button', { name: /subscribing/i })).toBeInTheDocument();
+      expect(
+        screen.getByRole('button', { name: /subscribing/i })
+      ).toBeInTheDocument();
     });
 
     // Wait for submission to complete
@@ -88,7 +90,9 @@ describe('Newsletter Subscription Flow', () => {
     // Wait for form to be enabled again
     await waitFor(() => {
       expect(emailInput).not.toBeDisabled();
-      expect(screen.getByRole('button', { name: /subscribe/i })).toBeInTheDocument();
+      expect(
+        screen.getByRole('button', { name: /subscribe/i })
+      ).toBeInTheDocument();
     });
   });
 
