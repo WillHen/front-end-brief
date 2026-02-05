@@ -26,10 +26,6 @@ export default function EditNewsletterPage() {
     return text.substring(0, maxLength).trim() + '...';
   };
 
-  useEffect(() => {
-    loadNewsletter();
-  }, [newsletterId]);
-
   const loadNewsletter = async () => {
     try {
       const response = await fetch('/api/admin/newsletters');
@@ -53,6 +49,11 @@ export default function EditNewsletterPage() {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    loadNewsletter();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [newsletterId]);
 
   const addSection = () => {
     setState((prev) => ({

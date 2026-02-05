@@ -80,9 +80,13 @@ Respond with a JSON array (max 5 articles):
       return [];
     }
 
-    const extracted = JSON.parse(jsonMatch[0]);
+    const extracted = JSON.parse(jsonMatch[0]) as Array<{
+      title: string;
+      link: string;
+      contentSnippet: string;
+    }>;
 
-    return extracted.map((item: any) => ({
+    return extracted.map((item) => ({
       title: item.title,
       link: item.link,
       source: sourceName,

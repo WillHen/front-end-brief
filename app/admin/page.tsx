@@ -11,7 +11,6 @@ export default function AdminPage() {
 
   const [newsletters, setNewsletters] = useState<Newsletter[]>([]);
   const [isCreating, setIsCreating] = useState(false);
-  const [editingId, setEditingId] = useState<string | null>(null);
 
   const [title, setTitle] = useState('');
   const [sections, setSections] = useState<NewsletterSection[]>([]);
@@ -65,22 +64,6 @@ export default function AdminPage() {
       console.error('Failed to load newsletters:', err);
       setNewsletters([]);
     }
-  };
-
-  const handleCreateNew = () => {
-    setIsCreating(true);
-    setEditingId(null);
-    setTitle('');
-    setSections([]);
-    setIsPreview(false);
-  };
-
-  const handleEdit = (newsletter: Newsletter) => {
-    setIsCreating(true);
-    setEditingId(newsletter.id);
-    setTitle(newsletter.title);
-    setSections(newsletter.content);
-    setIsPreview(false);
   };
 
   const addSection = () => {

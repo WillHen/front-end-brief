@@ -342,27 +342,33 @@ async function saveToDatabasePrompt(articles: ScoredArticle[]) {
   };
 
   try {
-    const saveToDb = await question('\n💾 Save top articles as draft newsletter to database? (y/n): ');
-    
+    const saveToDb = await question(
+      '\n💾 Save top articles as draft newsletter to database? (y/n): '
+    );
+
     if (saveToDb.toLowerCase() !== 'y') {
       console.log('✅ Skipped database save.\n');
       rl.close();
       return;
     }
 
-    const title = await question('Enter newsletter title (e.g., "Front-end Brief - Week of Feb 2, 2026"): ');
-    
+    const title = await question(
+      'Enter newsletter title (e.g., "Front-end Brief - Week of Feb 2, 2026"): '
+    );
+
     if (!title.trim()) {
       console.log('❌ Title required. Skipping database save.\n');
       rl.close();
       return;
     }
 
-    const limitStr = await question('How many top articles to include? (default: 10): ');
+    const limitStr = await question(
+      'How many top articles to include? (default: 10): '
+    );
     const limit = parseInt(limitStr) || 10;
 
     await saveToDatabase(articles, title.trim(), limit);
-    
+
     rl.close();
   } catch (error) {
     console.error('❌ Error during prompt:', error);
@@ -377,10 +383,10 @@ async function saveToDatabase(
   limit: number
 ) {
   const { getServiceSupabase } = await import('../lib/supabase');
-  
+
   try {
     const supabase = getServiceSupabase();
-    
+
     // Convert top articles to newsletter sections
     const topArticles = articles.slice(0, limit);
     const sections = topArticles.map((article) => ({
@@ -411,7 +417,9 @@ async function saveToDatabase(
     console.log(`   ID: ${data.id}`);
     console.log(`   Title: ${data.title}`);
     console.log(`   Sections: ${sections.length}`);
-    console.log(`   View in admin: http://localhost:3000/admin/edit/${data.id}\n`);
+    console.log(
+      `   View in admin: http://localhost:3000/admin/edit/${data.id}\n`
+    );
   } catch (error) {
     console.error('❌ Error saving to database:', error);
     throw error;
