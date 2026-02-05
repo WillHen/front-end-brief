@@ -1,0 +1,49 @@
+[
+  {
+    "id": "test-newsletter-1",
+    "title": "Front-end Brief - Week of Jan 29, 2026",
+    "content": [
+      {
+        "type": "article",
+        "title": "New React Features in 2026",
+        "description": "Explore the latest features added to React including improved server components and better performance optimizations.",
+        "url": "https://example.com/react-features"
+      },
+      {
+        "type": "tip",
+        "title": "CSS Grid Mastery",
+        "description": "Quick tips for mastering CSS Grid layouts in modern web applications.",
+        "url": "https://example.com/css-grid"
+      },
+      {
+        "type": "tool",
+        "title": "Vite 6.0 Released",
+        "description": "The latest version of Vite brings incredible build speed improvements and new features.",
+        "url": "https://example.com/vite-6"
+      }
+    ],
+    "status": "sent",
+    "created_at": "2026-01-29T10:00:00Z",
+    "sent_at": "2026-01-29T14:00:00Z"
+  },
+  {
+    "id": "test-newsletter-2",
+    "title": "Front-end Brief - Week of Feb 5, 2026",
+    "content": [
+      {
+        "type": "article",
+        "title": "TypeScript 5.5 Deep Dive",
+        "description": "An in-depth look at the new features in TypeScript 5.5 including better type inference.",
+        "url": "https://example.com/typescript-5-5"
+      },
+      {
+        "type": "text",
+        "title": "Community Spotlight",
+        "description": "Highlighting amazing open source contributions from the front-end community this week."
+      }
+    ],
+    "status": "draft",
+    "created_at": "2026-02-05T09:00:00Z",
+    "sent_at": null
+  }
+]

@@ -1,0 +1,20 @@
+[
+  {
+    "id": "test-subscriber-1",
+    "email": "test@example.com",
+    "subscribed_at": "2026-01-15T10:00:00Z",
+    "is_active": true
+  },
+  {
+    "id": "test-subscriber-2",
+    "email": "john@example.com",
+    "subscribed_at": "2026-01-20T14:30:00Z",
+    "is_active": true
+  },
+  {
+    "id": "test-subscriber-3",
+    "email": "unsubscribed@example.com",
+    "subscribed_at": "2026-01-10T08:00:00Z",
+    "is_active": false
+  }
+]
