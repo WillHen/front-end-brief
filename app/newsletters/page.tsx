@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import Image from 'next/image';
 import { getServiceSupabase } from '@/lib/supabase';
 import { Newsletter } from '@/types/database';
 
@@ -20,11 +21,14 @@ export default async function NewslettersPage() {
       {/* Header */}
       <header className='w-full border-b border-zinc-200 dark:border-zinc-800 bg-white dark:bg-black'>
         <div className='mx-auto max-w-7xl px-6 py-4 flex justify-between items-center'>
-          <Link
-            href='/'
-            className='text-xl font-bold text-zinc-900 dark:text-zinc-100'
-          >
-            Front-end Brief
+          <Link href='/' className='flex items-center'>
+            <Image
+              src='/logo.svg'
+              alt='Front-end Brief'
+              width={250}
+              height={60}
+              className='h-10 w-auto'
+            />
           </Link>
           <Link
             href='/'

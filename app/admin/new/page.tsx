@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import Image from 'next/image';
 import { NewsletterSection } from '@/types/database';
 
 export default function NewNewsletterPage() {
@@ -79,9 +80,15 @@ export default function NewNewsletterPage() {
     <div className='min-h-screen bg-zinc-50 dark:bg-zinc-950'>
       <header className='w-full border-b border-zinc-200 dark:border-zinc-800 bg-white dark:bg-black'>
         <div className='mx-auto max-w-7xl px-6 py-4 flex justify-between items-center'>
-          <h1 className='text-xl font-bold text-zinc-900 dark:text-zinc-100'>
-            Create Newsletter
-          </h1>
+          <Link href='/admin' className='flex items-center'>
+            <Image
+              src='/logo.svg'
+              alt='Front-end Brief'
+              width={250}
+              height={60}
+              className='h-10 w-auto'
+            />
+          </Link>
           <Link
             href='/admin'
             className='text-sm text-zinc-600 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-100'

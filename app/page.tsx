@@ -1,5 +1,6 @@
 import { SignupForm } from '@/components/SignupForm';
 import Link from 'next/link';
+import Image from 'next/image';
 
 export default function Home() {
   return (
@@ -7,9 +8,16 @@ export default function Home() {
       {/* Header */}
       <header className='w-full border-b border-zinc-200 dark:border-zinc-800'>
         <div className='mx-auto max-w-7xl px-6 py-4 flex justify-between items-center'>
-          <h1 className='text-xl font-bold text-zinc-900 dark:text-zinc-100'>
-            Front-end Brief
-          </h1>
+          <Link href='/' className='flex items-center'>
+            <Image
+              src='/logo.svg'
+              alt='Front-end Brief'
+              width={250}
+              height={60}
+              priority
+              className='h-10 w-auto'
+            />
+          </Link>
           <Link
             href='/newsletters'
             className='text-sm text-zinc-600 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-100 transition-colors'
