@@ -16,17 +16,35 @@ interface NewsletterEmailProps {
   title: string;
   content: NewsletterSection[];
   unsubscribeUrl: string;
+  issueNumber?: string;
 }
 
 export function NewsletterEmail({
   title,
   content,
-  unsubscribeUrl
+  unsubscribeUrl,
+  issueNumber
 }: NewsletterEmailProps) {
   // Truncate long descriptions for better email readability
   const truncateText = (text: string, maxLength: number = 350): string => {
     if (text.length <= maxLength) return text;
     return text.substring(0, maxLength).trim() + '...';
+  };
+
+  // Extract date from title or use current date
+  const getFormattedDate = () => {
+    const dateMatch = title.match(/(\w+ \d+, \d{4})/);
+    if (dateMatch) {
+      const date = new Date(dateMatch[1]);
+      return date.toLocaleDateString('en-US', {
+        month: 'short',
+        year: 'numeric'
+      });
+    }
+    return new Date().toLocaleDateString('en-US', {
+      month: 'short',
+      year: 'numeric'
+    });
   };
 
   return (
@@ -41,15 +59,21 @@ export function NewsletterEmail({
               height='40'
               style={{
                 width: 'auto',
-                margin: '0 auto',
+                margin: '0 auto 16px',
                 display: 'block'
               }}
             />
+            <Text style={brandSubtitle}>
+              The weekly brief for modern front-end developers.
+            </Text>
+            {issueNumber && (
+              <Text style={issueText}>
+                Issue #{issueNumber} — {getFormattedDate()}
+              </Text>
+            )}
           </Section>
 
-          <Section style={titleSection}>
-            <Heading style={newsletterTitle}>{title}</Heading>
-          </Section>
+          <Section style={contentDivider} />
 
           {content.map((section, index) => (
             <Section key={index} style={contentSection}>
@@ -112,28 +136,31 @@ const container = {
 };
 
 const header = {
-  padding: '40px 40px 20px',
-  backgroundColor: '#18181b'
+  padding: '40px 40px 40px',
+  backgroundColor: '#18181b',
+  textAlign: 'center' as const
 };
 
-const headerTitle = {
-  margin: 0,
-  fontSize: '24px',
-  fontWeight: 'bold',
-  color: '#ffffff'
+const brandSubtitle = {
+  margin: '0 0 16px',
+  fontSize: '16px',
+  fontWeight: '400',
+  color: 'rgba(255, 255, 255, 0.8)',
+  lineHeight: '1.4'
 };
 
-const titleSection = {
-  padding: '0 40px 40px',
-  backgroundColor: '#18181b'
+const issueText = {
+  margin: '0',
+  fontSize: '14px',
+  fontWeight: '500',
+  color: 'rgba(255, 255, 255, 0.6)',
+  lineHeight: '1.4'
 };
 
-const newsletterTitle = {
-  margin: 0,
-  fontSize: '28px',
-  fontWeight: 'bold',
-  lineHeight: '1.3',
-  color: '#ffffff'
+const contentDivider = {
+  height: '1px',
+  backgroundColor: '#27272a',
+  margin: '0'
 };
 
 const contentSection = {

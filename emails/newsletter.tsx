@@ -3,8 +3,7 @@ import { NewsletterEmail } from '@/components/NewsletterEmail';
 export default function NewsletterPreview() {
   return (
     <NewsletterEmail
-      title='Front-end Brief - Week of Feb 2, 2026'
-      content={[
+      title='Front-end Brief - Week of Feb 2, 2026'      issueNumber="12"      content={[
         {
           type: 'article',
           title:
