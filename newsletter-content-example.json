@@ -1,0 +1,38 @@
+{
+  "hero": {
+    "title": "React 19 Brings Major Performance Wins and New Hooks",
+    "subtitle": "The React team unveils their most ambitious release yet, with automatic batching improvements and the new useOptimistic hook",
+    "whyItMatters": "React 19 fundamentally changes how we handle async state and optimistic updates, eliminating common boilerplate patterns that developers have relied on for years. The new compiler optimizations mean less manual memoization and faster apps out of the box, which could reshape best practices across the entire React ecosystem.",
+    "link": "https://react.dev/blog/2024/04/25/react-19"
+  },
+  "articles": [
+    {
+      "category": "CSS",
+      "title": "View Transitions API Now Supported in All Major Browsers",
+      "summary": "Native browser support for smooth page transitions without JavaScript libraries. Chrome, Safari, and Firefox now offer built-in animation capabilities for SPA navigation.",
+      "source": "web.dev",
+      "link": "https://web.dev/articles/view-transitions"
+    },
+    {
+      "category": "Tooling",
+      "title": "Vercel Launches AI SDK 3.0 with Streaming Support",
+      "summary": "New SDK simplifies integrating AI models into Next.js apps with built-in streaming, rate limiting, and multi-model support for OpenAI, Anthropic, and more.",
+      "source": "Vercel Blog",
+      "link": "https://vercel.com/blog/introducing-ai-sdk-3-0"
+    },
+    {
+      "category": "CSS",
+      "title": "Scroll-Driven Animations Land in Baseline 2024",
+      "summary": "Create parallax effects and scroll-triggered animations purely with CSS using @scroll-timeline and animation-timeline properties.",
+      "source": "MDN Web Docs",
+      "link": "https://developer.mozilla.org/en-US/blog/scroll-driven-animations/"
+    },
+    {
+      "category": "JavaScript",
+      "title": "Web Components: A Complete Introduction for React Developers",
+      "summary": "Understanding the native web component standard and when to use it alongside or instead of framework-specific components.",
+      "source": "CSS-Tricks",
+      "link": "https://css-tricks.com/an-introduction-to-web-components/"
+    }
+  ]
+}

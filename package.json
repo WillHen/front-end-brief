@@ -8,6 +8,7 @@
     "start": "next start",
     "lint": "eslint",
     "discover": "tsx scripts/discover-content.ts",
+    "format-newsletter": "tsx scripts/format-newsletter-content.ts",
     "test": "vitest",
     "test:ui": "vitest --ui",
     "email": "email dev"

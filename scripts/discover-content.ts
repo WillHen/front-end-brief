@@ -258,7 +258,34 @@ Respond with a JSON array of scores (one per article, in order):
     return scoreB - scoreA;
   });
 
-  return scoredArticles;
+  // Apply diversity filter: max 2 articles per source
+  const diversifiedArticles = applySourceDiversity(scoredArticles, 2);
+
+  return diversifiedArticles;
+}
+
+// Apply source diversity filter - limit articles per source
+function applySourceDiversity(
+  articles: ScoredArticle[],
+  maxPerSource: number
+): ScoredArticle[] {
+  const sourceCounts = new Map<string, number>();
+  const diversified: ScoredArticle[] = [];
+
+  for (const article of articles) {
+    const currentCount = sourceCounts.get(article.source) || 0;
+
+    if (currentCount < maxPerSource) {
+      diversified.push(article);
+      sourceCounts.set(article.source, currentCount + 1);
+    }
+  }
+
+  console.log(
+    `📊 Source diversity applied: ${articles.length} → ${diversified.length} articles (max ${maxPerSource} per source)\n`
+  );
+
+  return diversified;
 }
 
 // Display top articles
@@ -426,6 +453,87 @@ async function saveToDatabase(
   }
 }
 
+// Save formatted newsletter content to database
+async function saveFormattedContentToDatabase(formattedContent: {
+  hero: {
+    title: string;
+    subtitle: string;
+    whyItMatters: string;
+    link: string;
+  };
+  articles: Array<{
+    category: string;
+    title: string;
+    summary: string;
+    source: string;
+    link: string;
+  }>;
+}) {
+  const { getServiceSupabase } = await import('../lib/supabase');
+
+  try {
+    const supabase = getServiceSupabase();
+
+    // Convert formatted content to newsletter sections
+    const sections = [];
+
+    // Add hero story as a text section
+    sections.push({
+      type: 'text',
+      title: formattedContent.hero.title,
+      description: `${formattedContent.hero.subtitle}\n\n**Why it matters:** ${formattedContent.hero.whyItMatters}`,
+      url: formattedContent.hero.link
+    });
+
+    // Add other articles
+    for (const article of formattedContent.articles) {
+      sections.push({
+        type: 'article',
+        title: article.title,
+        description: `${article.summary}\n\n*Source: ${article.source}*\n*Category: ${article.category}*`,
+        url: article.link
+      });
+    }
+
+    // Generate title with current date
+    const now = new Date();
+    const dateStr = now.toLocaleDateString('en-US', {
+      month: 'short',
+      day: 'numeric',
+      year: 'numeric'
+    });
+    const title = `Front-end Brief - Week of ${dateStr}`;
+
+    // Insert newsletter as draft
+    const { data, error } = await supabase
+      .from('newsletters')
+      .insert([
+        {
+          title,
+          content: sections,
+          status: 'draft'
+        }
+      ])
+      .select()
+      .single();
+
+    if (error) {
+      throw error;
+    }
+
+    console.log(`✅ Formatted newsletter saved to database!`);
+    console.log(`   ID: ${data.id}`);
+    console.log(`   Title: ${data.title}`);
+    console.log(`   Sections: ${sections.length}`);
+    console.log(
+      `   View in admin: http://localhost:3000/admin/edit/${data.id}\n`
+    );
+  } catch (error) {
+    console.error('❌ Error saving formatted content to database:', error);
+    throw error;
+  }
+}
+
 // Main execution
 async function main() {
   console.log('🚀 Front-end Brief Content Discovery Agent\n');
@@ -458,6 +566,36 @@ async function main() {
     await saveToDatabasePrompt(scoredArticles);
 
     console.log('✅ Content discovery complete!\n');
+
+    // Step 6: Format top articles for newsletter
+    console.log('📝 Formatting top articles for newsletter...\n');
+    const topArticles = scoredArticles
+      .filter((article) => article.score >= 70)
+      .slice(0, 6)
+      .map((article) => article.link);
+
+    if (topArticles.length >= 3) {
+      const { formatNewsletterContent } =
+        await import('./format-newsletter-content.js');
+      const formattedContent = await formatNewsletterContent(topArticles);
+
+      const fs = await import('fs/promises');
+      await fs.writeFile(
+        'newsletter-content.json',
+        JSON.stringify(formattedContent, null, 2)
+      );
+      console.log(
+        '✅ Formatted newsletter content saved to newsletter-content.json\n'
+      );
+
+      // Save to database
+      console.log('💾 Saving formatted content to database...\n');
+      await saveFormattedContentToDatabase(formattedContent);
+    } else {
+      console.log(
+        '⚠️  Not enough high-quality articles to format newsletter (need at least 3)\n'
+      );
+    }
   } catch (error) {
     console.error('❌ Fatal error:', error);
     process.exit(1);

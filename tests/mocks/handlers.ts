@@ -10,20 +10,28 @@ export const handlers = [
 
   // Admin newsletters - POST (create)
   http.post('/api/admin/newsletters', async ({ request }) => {
-    const body = await request.json();
+    const body = (await request.json()) as {
+      title: string;
+      content: unknown;
+    };
     const newNewsletter = {
       id: `test-newsletter-${Date.now()}`,
-      ...body,
+      title: body.title,
+      content: body.content,
       status: 'draft',
       created_at: new Date().toISOString(),
-      sent_at: null
+      sent_at: null,
+      updated_at: new Date().toISOString()
     };
     return HttpResponse.json(newNewsletter, { status: 201 });
   }),
 
   // Admin newsletters - PUT (update)
   http.put('/api/admin/newsletters/:id', async ({ request, params }) => {
-    const body = await request.json();
+    const body = (await request.json()) as {
+      title?: string;
+      content?: unknown;
+    };
     const newsletter = newslettersData.find((n) => n.id === params.id);
 
     if (!newsletter) {
@@ -33,7 +41,12 @@ export const handlers = [
       );
     }
 
-    const updated = { ...newsletter, ...body };
+    const updated = {
+      ...newsletter,
+      title: body.title ?? newsletter.title,
+      content: body.content ?? newsletter.content,
+      updated_at: new Date().toISOString()
+    };
     return HttpResponse.json(updated);
   }),
 

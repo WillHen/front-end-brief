@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import Image from 'next/image';
 import { Newsletter, NewsletterSection } from '@/types/database';
 
 export default function AdminPage() {
@@ -94,9 +93,9 @@ export default function AdminPage() {
 
     try {
       const response = await fetch('/api/admin/newsletters', {
-        method: editingId ? 'PUT' : 'POST',
+        method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ id: editingId, title, content: sections })
+        body: JSON.stringify({ title, content: sections })
       });
 
       if (response.ok) {
@@ -188,7 +187,7 @@ export default function AdminPage() {
         <header className='w-full border-b border-zinc-200 dark:border-zinc-800 bg-white dark:bg-black'>
           <div className='mx-auto max-w-7xl px-6 py-4 flex justify-between items-center'>
             <h1 className='text-xl font-bold text-zinc-900 dark:text-zinc-100'>
-              {editingId ? 'Edit Newsletter' : 'Create Newsletter'}
+              Create Newsletter
             </h1>
             <button
               onClick={() => setIsCreating(false)}
