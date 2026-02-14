@@ -139,6 +139,38 @@ async function fetchArticles(): Promise<Article[]> {
     }
   }
 
+  // Fetch from communities (Reddit, etc.)
+  for (const community of sources.communities) {
+    console.log(`  Fetching: ${community.name}`);
+
+    if (community.rss) {
+      try {
+        const feed = await RSS_PARSER.parseURL(community.rss);
+
+        const recentArticles = feed.items
+          .filter((item) => isRecent(item.pubDate))
+          .map((item) => ({
+            title: item.title || 'Untitled',
+            link: item.link || '',
+            pubDate: item.pubDate,
+            contentSnippet:
+              item.contentSnippet || item.content?.substring(0, 500),
+            source: community.name,
+            categories: community.categories
+          }));
+
+        articles.push(...recentArticles);
+        console.log(`    ✓ Found ${recentArticles.length} recent articles`);
+      } catch (error) {
+        console.log(
+          `    ✗ Failed to fetch RSS feed: ${
+            error instanceof Error ? error.message : 'Unknown error'
+          }`
+        );
+      }
+    }
+  }
+
   console.log(`\n✅ Total articles fetched: ${articles.length}\n`);
   return articles;
 }

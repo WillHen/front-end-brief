@@ -135,16 +135,19 @@
     {
       "name": "Reddit - r/webdev",
       "url": "https://www.reddit.com/r/webdev/",
+      "rss": "https://www.reddit.com/r/webdev/.rss",
       "categories": ["General", "Discussion"]
     },
     {
       "name": "Reddit - r/javascript",
       "url": "https://www.reddit.com/r/javascript/",
+      "rss": "https://www.reddit.com/r/javascript/.rss",
       "categories": ["JavaScript", "Discussion"]
     },
     {
       "name": "Reddit - r/reactjs",
       "url": "https://www.reddit.com/r/reactjs/",
+      "rss": "https://www.reddit.com/r/reactjs/.rss",
       "categories": ["React", "Discussion"]
     },
     {
