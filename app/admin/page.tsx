@@ -4,6 +4,14 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { Newsletter, NewsletterSection } from '@/types/database';
 
+// Helper function to get default newsletter title
+const getDefaultTitle = () => {
+  const now = new Date();
+  const options: Intl.DateTimeFormatOptions = { month: 'short', day: 'numeric', year: 'numeric' };
+  const dateStr = now.toLocaleDateString('en-US', options);
+  return `Front-end Brief - Week of ${dateStr}`;
+};
+
 export default function AdminPage() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [password, setPassword] = useState('');
@@ -12,7 +20,7 @@ export default function AdminPage() {
   const [newsletters, setNewsletters] = useState<Newsletter[]>([]);
   const [isCreating, setIsCreating] = useState(false);
 
-  const [title, setTitle] = useState('');
+  const [title, setTitle] = useState(getDefaultTitle());
   const [sections, setSections] = useState<NewsletterSection[]>([]);
   const [isPreview, setIsPreview] = useState(false);
   const [isSaving, setIsSaving] = useState(false);

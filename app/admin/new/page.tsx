@@ -6,10 +6,18 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { NewsletterSection } from '@/types/database';
 
+// Helper function to get default newsletter title
+const getDefaultTitle = () => {
+  const now = new Date();
+  const options: Intl.DateTimeFormatOptions = { month: 'short', day: 'numeric', year: 'numeric' };
+  const dateStr = now.toLocaleDateString('en-US', options);
+  return `Front-end Brief - Week of ${dateStr}`;
+};
+
 export default function NewNewsletterPage() {
   const router = useRouter();
   const [state, setState] = useState({
-    title: '',
+    title: getDefaultTitle(),
     sections: [] as NewsletterSection[],
     isPreview: false,
     isSaving: false,
