@@ -27,6 +27,9 @@ export default function NewNewsletterPage() {
     isSaving: false,
     message: ''
   });
+  const [analyzingIndexes, setAnalyzingIndexes] = useState<Set<number>>(
+    new Set()
+  );
 
   const truncateText = (text: string, maxLength: number = 350): string => {
     if (text.length <= maxLength) return text;
@@ -60,6 +63,42 @@ export default function NewNewsletterPage() {
       ...prev,
       sections: prev.sections.filter((_, i) => i !== index)
     }));
+  };
+
+  const analyzeUrl = async (index: number, url: string | undefined) => {
+    if (!url || !url.startsWith('http')) return;
+
+    setAnalyzingIndexes((prev) => new Set(prev).add(index));
+
+    try {
+      const response = await fetch('/api/admin/analyze-url', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ url })
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        setState((prev) => {
+          const updated = [...prev.sections];
+          updated[index] = {
+            ...updated[index],
+            title: data.title,
+            description: data.description,
+            type: data.type
+          };
+          return { ...prev, sections: updated };
+        });
+      }
+    } catch (error) {
+      console.error('Failed to analyze URL:', error);
+    } finally {
+      setAnalyzingIndexes((prev) => {
+        const next = new Set(prev);
+        next.delete(index);
+        return next;
+      });
+    }
   };
 
   const handleSave = async () => {
@@ -213,15 +252,25 @@ export default function NewNewsletterPage() {
                     rows={3}
                     className='w-full px-3 py-2 mb-2 rounded border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100'
                   />
-                  <input
-                    type='url'
-                    value={section.url}
-                    onChange={(e) =>
-                      updateSection(index, 'url', e.target.value)
-                    }
-                    placeholder='URL (optional)'
-                    className='w-full px-3 py-2 rounded border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100'
-                  />
+                  <div className='flex gap-2'>
+                    <input
+                      type='url'
+                      value={section.url}
+                      onChange={(e) =>
+                        updateSection(index, 'url', e.target.value)
+                      }
+                      placeholder='URL (optional)'
+                      className='flex-1 px-3 py-2 rounded border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100'
+                    />
+                    <button
+                      type='button'
+                      onClick={() => analyzeUrl(index, section.url)}
+                      disabled={!section.url || analyzingIndexes.has(index)}
+                      className='px-4 py-2 bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 rounded text-sm font-medium hover:bg-zinc-800 dark:hover:bg-zinc-200 disabled:opacity-50 disabled:cursor-not-allowed'
+                    >
+                      {analyzingIndexes.has(index) ? '...' : '✨ Analyze'}
+                    </button>
+                  </div>
                 </div>
               ))}
             </div>
