@@ -4,6 +4,7 @@ import {
   Container,
   Head,
   Heading,
+  Hr,
   Html,
   Img,
   Link,
@@ -25,12 +26,6 @@ export function NewsletterEmail({
   unsubscribeUrl,
   issueNumber
 }: NewsletterEmailProps) {
-  // Truncate long descriptions for better email readability
-  const truncateText = (text: string, maxLength: number = 350): string => {
-    if (text.length <= maxLength) return text;
-    return text.substring(0, maxLength).trim() + '...';
-  };
-
   // Extract date from title or use current date
   const getFormattedDate = () => {
     const dateMatch = title.match(/(\w+ \d+, \d{4})/);
@@ -45,6 +40,39 @@ export function NewsletterEmail({
       month: 'short',
       year: 'numeric'
     });
+  };
+
+  // Separate hero story (first text section) from other articles
+  const heroStory = content.find((s) => s.type === 'text');
+  const articles = content.filter((s) => s.type === 'article');
+
+  // Parse hero story description for subtitle and why it matters
+  const parseHeroDescription = (desc: string) => {
+    const parts = desc.split('\n\n');
+    const subtitle = parts[0] || '';
+    const whyItMatters =
+      parts[1]?.replace('**Why it matters:**', '').trim() || '';
+    return { subtitle, whyItMatters };
+  };
+
+  // Extract category from article description
+  const extractCategory = (desc: string) => {
+    const match = desc.match(/\*Category: ([^*]+)\*/);
+    return match ? match[1].trim() : null;
+  };
+
+  // Get category badge color
+  const getCategoryColor = (category: string | null) => {
+    const colors: Record<string, string> = {
+      React: '#61dafb',
+      CSS: '#264de4',
+      JavaScript: '#f7df1e',
+      Tooling: '#8b5cf6',
+      AI: '#10b981',
+      Performance: '#f59e0b',
+      Design: '#ec4899'
+    };
+    return colors[category || ''] || '#6b7280';
   };
 
   return (
@@ -75,35 +103,98 @@ export function NewsletterEmail({
 
           <Section style={contentDivider} />
 
-          {content.map((section, index) => (
-            <Section key={index} style={contentSection}>
-              <table width='100%' cellPadding='0' cellSpacing='0'>
-                <tr>
-                  <td width='40' style={iconCell}>
-                    {section.type === 'article' && '📚'}
-                    {section.type === 'tip' && '💡'}
-                    {section.type === 'tool' && '🛠️'}
-                    {section.type === 'text' && '✍️'}
-                  </td>
-                  <td>
-                    <Heading as='h3' style={sectionTitle}>
-                      {section.title}
-                    </Heading>
-                    {section.description && (
-                      <Text style={sectionDescription}>
-                        {truncateText(section.description)}
-                      </Text>
-                    )}
-                    {section.url && (
-                      <Link href={section.url} style={sectionLink}>
-                        Read more →
-                      </Link>
-                    )}
-                  </td>
-                </tr>
-              </table>
-            </Section>
-          ))}
+          {/* Hero Story */}
+          {heroStory &&
+            (() => {
+              const { subtitle, whyItMatters } = parseHeroDescription(
+                heroStory.description || ''
+              );
+              return (
+                <Section style={heroSection}>
+                  <Text style={heroLabel}>Featured Story</Text>
+                  <Heading as='h2' style={heroTitle}>
+                    {heroStory.title}
+                  </Heading>
+                  <Text style={heroSubtitle}>{subtitle}</Text>
+
+                  {whyItMatters && (
+                    <>
+                      <Text style={whyMattersLabel}>Why it matters</Text>
+                      <Text style={whyMattersText}>{whyItMatters}</Text>
+                    </>
+                  )}
+
+                  {heroStory.url && (
+                    <Link href={heroStory.url} style={heroCta}>
+                      Read the full article →
+                    </Link>
+                  )}
+                </Section>
+              );
+            })()}
+
+          {/* Divider */}
+          <Section style={{ padding: '30px 40px' }}>
+            <Hr style={divider} />
+          </Section>
+
+          {/* Articles */}
+          <Section style={{ padding: '0 40px 20px' }}>
+            <Heading as='h3' style={articlesHeading}>
+              This Week&apos;s Articles
+            </Heading>
+          </Section>
+
+          {articles.map((article, index) => {
+            const category = extractCategory(article.description || '');
+            const summary = article.description?.split('\n')[0] || '';
+            const source =
+              article.description?.match(/\*Source: ([^*]+)\*/)?.[1] || '';
+
+            return (
+              <Section key={index} style={articleSection}>
+                {category && (
+                  <table width='100%' cellPadding='0' cellSpacing='0'>
+                    <tr>
+                      <td>
+                        <Text
+                          style={{
+                            ...categoryBadge,
+                            backgroundColor: getCategoryColor(category)
+                          }}
+                        >
+                          {category}
+                        </Text>
+                      </td>
+                    </tr>
+                  </table>
+                )}
+
+                <Heading as='h4' style={articleTitle}>
+                  {article.title}
+                </Heading>
+
+                <Text style={articleSummary}>{summary}</Text>
+
+                <table width='100%' cellPadding='0' cellSpacing='0'>
+                  <tr>
+                    <td>
+                      {source && (
+                        <Text style={articleSource}>Source: {source}</Text>
+                      )}
+                    </td>
+                    <td align='right'>
+                      {article.url && (
+                        <Link href={article.url} style={articleCta}>
+                          Read →
+                        </Link>
+                      )}
+                    </td>
+                  </tr>
+                </table>
+              </Section>
+            );
+          })}
 
           <Section style={footer}>
             <Text style={footerText}>
@@ -163,37 +254,119 @@ const contentDivider = {
   margin: '0'
 };
 
-const contentSection = {
-  padding: '30px 40px',
-  borderBottom: '1px solid #e4e4e7'
+const heroSection = {
+  padding: '40px 40px',
+  backgroundColor: '#fafafa'
 };
 
-const iconCell = {
-  paddingRight: '16px',
-  fontSize: '24px',
-  verticalAlign: 'top'
+const heroLabel = {
+  margin: '0 0 8px',
+  fontSize: '12px',
+  fontWeight: '600',
+  color: '#3b82f6',
+  textTransform: 'uppercase' as const,
+  letterSpacing: '0.05em'
 };
 
-const sectionTitle = {
+const heroTitle = {
   margin: '0 0 12px',
-  fontSize: '20px',
+  fontSize: '28px',
+  fontWeight: 'bold',
+  lineHeight: '1.3',
+  color: '#18181b'
+};
+
+const heroSubtitle = {
+  margin: '0 0 20px',
+  fontSize: '18px',
+  lineHeight: '1.5',
+  color: '#52525b',
+  fontWeight: '400'
+};
+
+const whyMattersLabel = {
+  margin: '0 0 8px',
+  fontSize: '14px',
   fontWeight: '600',
   color: '#18181b'
 };
 
-const sectionDescription = {
+const whyMattersText = {
+  margin: '0 0 20px',
+  fontSize: '15px',
+  lineHeight: '1.6',
+  color: '#52525b',
+  fontStyle: 'italic' as const
+};
+
+const heroCta = {
+  display: 'inline-block',
+  padding: '12px 24px',
+  backgroundColor: '#18181b',
+  color: '#ffffff',
+  textDecoration: 'none',
+  borderRadius: '6px',
+  fontSize: '16px',
+  fontWeight: '500'
+};
+
+const divider = {
+  borderColor: '#e4e4e7',
+  margin: '0'
+};
+
+const articlesHeading = {
+  margin: '0 0 20px',
+  fontSize: '22px',
+  fontWeight: 'bold',
+  color: '#18181b'
+};
+
+const articleSection = {
+  padding: '20px 40px',
+  borderBottom: '1px solid #f4f4f5'
+};
+
+const categoryBadge = {
+  display: 'inline-block',
+  padding: '4px 10px',
+  fontSize: '11px',
+  fontWeight: '600',
+  color: '#ffffff',
+  borderRadius: '4px',
+  textTransform: 'uppercase' as const,
+  letterSpacing: '0.05em',
+  margin: '0 0 12px'
+};
+
+const articleTitle = {
+  margin: '0 0 10px',
+  fontSize: '18px',
+  fontWeight: '600',
+  lineHeight: '1.4',
+  color: '#18181b'
+};
+
+const articleSummary = {
   margin: '0 0 12px',
   fontSize: '15px',
   lineHeight: '1.5',
   color: '#52525b'
 };
 
-const sectionLink = {
+const articleSource = {
+  margin: '0',
+  fontSize: '13px',
+  color: '#a1a1aa',
+  fontStyle: 'italic' as const
+};
+
+const articleCta = {
   display: 'inline-block',
-  color: '#18181b',
-  fontSize: '16px',
-  fontWeight: '500',
-  textDecoration: 'none'
+  color: '#3b82f6',
+  textDecoration: 'none',
+  fontSize: '14px',
+  fontWeight: '500'
 };
 
 const footer = {
