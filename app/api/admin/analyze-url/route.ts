@@ -50,7 +50,9 @@ Return ONLY the JSON object, no other text.`
     let jsonText = content.text.trim();
     if (jsonText.startsWith('```')) {
       // Remove markdown code fences
-      jsonText = jsonText.replace(/^```(?:json)?\n?/, '').replace(/\n?```$/, '');
+      jsonText = jsonText
+        .replace(/^```(?:json)?\n?/, '')
+        .replace(/\n?```$/, '');
     }
     const analysis = JSON.parse(jsonText);
 
