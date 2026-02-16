@@ -7,7 +7,11 @@ import { Newsletter, NewsletterSection } from '@/types/database';
 // Helper function to get default newsletter title
 const getDefaultTitle = () => {
   const now = new Date();
-  const options: Intl.DateTimeFormatOptions = { month: 'short', day: 'numeric', year: 'numeric' };
+  const options: Intl.DateTimeFormatOptions = {
+    month: 'short',
+    day: 'numeric',
+    year: 'numeric'
+  };
   const dateStr = now.toLocaleDateString('en-US', options);
   return `Front-end Brief - Week of ${dateStr}`;
 };
