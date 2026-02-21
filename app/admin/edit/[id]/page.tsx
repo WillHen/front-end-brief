@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
@@ -11,9 +11,9 @@ export default function EditNewsletterPage() {
   const params = useParams();
   const newsletterId = params.id as string;
 
-  const [newsletter, setNewsletter] = useState<Newsletter | null>(null);
-  const [loading, setLoading] = useState(true);
   const [state, setState] = useState({
+    newsletter: null as Newsletter | null,
+    loading: true,
     title: '',
     sections: [] as NewsletterSection[],
     isPreview: false,
@@ -27,34 +27,40 @@ export default function EditNewsletterPage() {
     return text.substring(0, maxLength).trim() + '...';
   };
 
-  const loadNewsletter = async () => {
+  const loadNewsletter = useCallback(async () => {
     try {
       const response = await fetch('/api/admin/newsletters');
       const data = await response.json();
       const found = data.find((n: Newsletter) => n.id === newsletterId);
 
       if (found) {
-        setNewsletter(found);
         setState((prev) => ({
           ...prev,
+          newsletter: found,
           title: found.title,
-          sections: found.content
+          sections: found.content,
+          loading: false
         }));
       } else {
-        setState((prev) => ({ ...prev, message: 'Newsletter not found' }));
+        setState((prev) => ({
+          ...prev,
+          message: 'Newsletter not found',
+          loading: false
+        }));
       }
     } catch (err) {
       console.error('Failed to load newsletter:', err);
-      setState((prev) => ({ ...prev, message: 'Error loading newsletter' }));
-    } finally {
-      setLoading(false);
+      setState((prev) => ({
+        ...prev,
+        message: 'Error loading newsletter',
+        loading: false
+      }));
     }
-  };
+  }, [newsletterId]);
 
   useEffect(() => {
     loadNewsletter();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [newsletterId]);
+  }, [loadNewsletter]);
 
   const addSection = () => {
     setState((prev) => ({
@@ -149,7 +155,7 @@ export default function EditNewsletterPage() {
     }
   };
 
-  if (loading) {
+  if (state.loading) {
     return (
       <div className='min-h-screen bg-zinc-50 dark:bg-zinc-950 flex items-center justify-center'>
         <p className='text-zinc-600 dark:text-zinc-400'>Loading...</p>
@@ -157,7 +163,7 @@ export default function EditNewsletterPage() {
     );
   }
 
-  if (!newsletter) {
+  if (!state.newsletter) {
     return (
       <div className='min-h-screen bg-zinc-50 dark:bg-zinc-950 flex items-center justify-center'>
         <div className='text-center'>
@@ -230,10 +236,14 @@ export default function EditNewsletterPage() {
         {!state.isPreview ? (
           <div className='space-y-6'>
             <div>
-              <label className='block text-sm font-medium text-zinc-900 dark:text-zinc-100 mb-2'>
+              <label
+                htmlFor='newsletter-title'
+                className='block text-sm font-medium text-zinc-900 dark:text-zinc-100 mb-2'
+              >
                 Newsletter Title
               </label>
               <input
+                id='newsletter-title'
                 type='text'
                 value={state.title}
                 onChange={(e) =>
@@ -259,7 +269,11 @@ export default function EditNewsletterPage() {
 
               {state.sections.map((section, index) => (
                 <div
-                  key={index}
+                  key={
+                    section.title
+                      ? `edit-${section.type}-${section.title}`
+                      : `edit-new-${state.sections.indexOf(section)}`
+                  }
                   className='mb-4 p-4 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-lg'
                 >
                   <div className='flex justify-between items-start mb-3'>
@@ -336,9 +350,13 @@ export default function EditNewsletterPage() {
               {state.title || 'Untitled Newsletter'}
             </h2>
             <div className='space-y-6'>
-              {state.sections.map((section, index) => (
+              {state.sections.map((section) => (
                 <div
-                  key={index}
+                  key={
+                    section.title
+                      ? `preview-${section.type}-${section.title}`
+                      : `preview-new-${state.sections.indexOf(section)}`
+                  }
                   className='border-b border-zinc-200 dark:border-zinc-800 pb-6'
                 >
                   <div className='flex items-start gap-3'>

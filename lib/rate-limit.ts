@@ -33,16 +33,3 @@ export function checkRateLimit(
   record.count++;
   return true;
 }
-
-export function getRateLimitInfo(
-  identifier: string
-): { remaining: number; resetTime: number } | null {
-  const record = rateLimit.get(identifier);
-  if (!record || Date.now() > record.resetTime) {
-    return { remaining: 5, resetTime: Date.now() + 15 * 60 * 1000 };
-  }
-  return {
-    remaining: Math.max(0, 5 - record.count),
-    resetTime: record.resetTime
-  };
-}

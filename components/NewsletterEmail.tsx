@@ -145,14 +145,14 @@ export function NewsletterEmail({
             </Heading>
           </Section>
 
-          {articles.map((article, index) => {
+          {articles.map((article) => {
             const category = extractCategory(article.description || '');
             const summary = article.description?.split('\n')[0] || '';
             const source =
               article.description?.match(/\*Source: ([^*]+)\*/)?.[1] || '';
 
             return (
-              <Section key={index} style={articleSection}>
+              <Section key={`${article.type}-${article.title}`} style={articleSection}>
                 {category && (
                   <table width='100%' cellPadding='0' cellSpacing='0'>
                     <tr>

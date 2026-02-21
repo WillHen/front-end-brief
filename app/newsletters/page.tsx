@@ -2,6 +2,13 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { getServiceSupabase } from '@/lib/supabase';
 import { Newsletter } from '@/types/database';
+import type { Metadata } from 'next';
+
+export const metadata: Metadata = {
+  title: 'Past Newsletters - Front-end Brief',
+  description:
+    'Browse the archive of Front-end Brief newsletters. Curated front-end development articles, tools, and insights.'
+};
 
 export default async function NewslettersPage() {
   const supabase = getServiceSupabase();

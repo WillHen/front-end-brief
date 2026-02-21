@@ -2,9 +2,28 @@ import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { getServiceSupabase } from '@/lib/supabase';
 import { Newsletter, NewsletterSection } from '@/types/database';
+import type { Metadata } from 'next';
 
 interface PageProps {
   params: Promise<{ id: string }>;
+}
+
+export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
+  const { id } = await params;
+  const supabase = getServiceSupabase();
+  const { data: newsletter } = await supabase
+    .from('newsletters')
+    .select('title')
+    .eq('id', id)
+    .eq('status', 'sent')
+    .single();
+
+  return {
+    title: newsletter ? `${newsletter.title} - Front-end Brief` : 'Newsletter - Front-end Brief',
+    description: newsletter
+      ? `Read ${newsletter.title} from Front-end Brief.`
+      : 'Read this edition of Front-end Brief.'
+  };
 }
 
 export default async function NewsletterPage({ params }: PageProps) {
@@ -74,9 +93,9 @@ export default async function NewsletterPage({ params }: PageProps) {
 
           <div className='space-y-8'>
             {typedNewsletter.content.map(
-              (section: NewsletterSection, index: number) => (
+              (section: NewsletterSection) => (
                 <section
-                  key={index}
+                  key={`${section.type}-${section.title}`}
                   className='p-6 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-lg'
                 >
                   <div className='flex items-start gap-4'>

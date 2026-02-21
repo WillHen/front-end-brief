@@ -1,6 +1,13 @@
 import { SignupForm } from '@/components/SignupForm';
 import Link from 'next/link';
 import Image from 'next/image';
+import type { Metadata } from 'next';
+
+export const metadata: Metadata = {
+  title: 'Front-end Brief - Weekly Front-end Development Newsletter',
+  description:
+    'Stay ahead in front-end development. Get the latest articles, tools, and insights delivered weekly.'
+};
 
 export default function Home() {
   return (
