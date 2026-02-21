@@ -8,7 +8,9 @@ interface PageProps {
   params: Promise<{ id: string }>;
 }
 
-export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
+export async function generateMetadata({
+  params
+}: PageProps): Promise<Metadata> {
   const { id } = await params;
   const supabase = getServiceSupabase();
   const { data: newsletter } = await supabase
@@ -19,7 +21,9 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     .single();
 
   return {
-    title: newsletter ? `${newsletter.title} - Front-end Brief` : 'Newsletter - Front-end Brief',
+    title: newsletter
+      ? `${newsletter.title} - Front-end Brief`
+      : 'Newsletter - Front-end Brief',
     description: newsletter
       ? `Read ${newsletter.title} from Front-end Brief.`
       : 'Read this edition of Front-end Brief.'
@@ -92,43 +96,41 @@ export default async function NewsletterPage({ params }: PageProps) {
           </header>
 
           <div className='space-y-8'>
-            {typedNewsletter.content.map(
-              (section: NewsletterSection) => (
-                <section
-                  key={`${section.type}-${section.title}`}
-                  className='p-6 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-lg'
-                >
-                  <div className='flex items-start gap-4'>
-                    <div className='flex-shrink-0 text-2xl'>
-                      {section.type === 'article' && '📚'}
-                      {section.type === 'tip' && '💡'}
-                      {section.type === 'tool' && '🛠️'}
-                      {section.type === 'text' && '✍️'}
-                    </div>
-                    <div className='flex-1'>
-                      <h2 className='text-xl font-semibold text-zinc-900 dark:text-zinc-100 mb-2'>
-                        {section.title}
-                      </h2>
-                      {section.description && (
-                        <p className='text-zinc-600 dark:text-zinc-400 mb-3'>
-                          {section.description}
-                        </p>
-                      )}
-                      {section.url && (
-                        <a
-                          href={section.url}
-                          target='_blank'
-                          rel='noopener noreferrer'
-                          className='text-zinc-900 dark:text-zinc-100 hover:underline font-medium'
-                        >
-                          Read more →
-                        </a>
-                      )}
-                    </div>
+            {typedNewsletter.content.map((section: NewsletterSection) => (
+              <section
+                key={`${section.type}-${section.title}`}
+                className='p-6 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-lg'
+              >
+                <div className='flex items-start gap-4'>
+                  <div className='flex-shrink-0 text-2xl'>
+                    {section.type === 'article' && '📚'}
+                    {section.type === 'tip' && '💡'}
+                    {section.type === 'tool' && '🛠️'}
+                    {section.type === 'text' && '✍️'}
                   </div>
-                </section>
-              )
-            )}
+                  <div className='flex-1'>
+                    <h2 className='text-xl font-semibold text-zinc-900 dark:text-zinc-100 mb-2'>
+                      {section.title}
+                    </h2>
+                    {section.description && (
+                      <p className='text-zinc-600 dark:text-zinc-400 mb-3'>
+                        {section.description}
+                      </p>
+                    )}
+                    {section.url && (
+                      <a
+                        href={section.url}
+                        target='_blank'
+                        rel='noopener noreferrer'
+                        className='text-zinc-900 dark:text-zinc-100 hover:underline font-medium'
+                      >
+                        Read more →
+                      </a>
+                    )}
+                  </div>
+                </div>
+              </section>
+            ))}
           </div>
         </article>
 

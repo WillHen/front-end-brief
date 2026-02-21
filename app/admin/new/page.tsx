@@ -220,7 +220,10 @@ export default function NewNewsletterPage() {
         {!state.isPreview ? (
           <div className='space-y-6'>
             <div>
-              <label htmlFor='newsletter-title' className='block text-sm font-medium text-zinc-900 dark:text-zinc-100 mb-2'>
+              <label
+                htmlFor='newsletter-title'
+                className='block text-sm font-medium text-zinc-900 dark:text-zinc-100 mb-2'
+              >
                 Newsletter Title
               </label>
               <input
@@ -261,7 +264,11 @@ export default function NewNewsletterPage() {
 
               {state.sections.map((section, index) => (
                 <div
-                  key={section.title ? `edit-${section.type}-${section.title}` : `edit-new-${state.sections.indexOf(section)}`}
+                  key={
+                    section.title
+                      ? `edit-${section.type}-${section.title}`
+                      : `edit-new-${state.sections.indexOf(section)}`
+                  }
                   className='mb-4 p-4 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-lg'
                 >
                   <div className='flex justify-between items-start mb-3'>
@@ -338,9 +345,15 @@ export default function NewNewsletterPage() {
             <h2 className='text-3xl font-bold text-zinc-900 dark:text-zinc-100 mb-6'>
               {state.title || 'Untitled Newsletter'}
             </h2>
-            <div className='space-y-6'>\n              {state.sections.map((section) => (
+            <div className='space-y-6'>
+              \n{' '}
+              {state.sections.map((section) => (
                 <div
-                  key={section.title ? `preview-${section.type}-${section.title}` : `preview-new-${state.sections.indexOf(section)}`}
+                  key={
+                    section.title
+                      ? `preview-${section.type}-${section.title}`
+                      : `preview-new-${state.sections.indexOf(section)}`
+                  }
                   className='border-b border-zinc-200 dark:border-zinc-800 pb-6'
                 >
                   <div className='flex items-start gap-3'>

@@ -57,10 +57,24 @@ async function fetchArticles(): Promise<Article[]> {
 
   // Extract RSS URLs from source objects
   const blogRssUrls = sources.blogs
-    .map((blog: { name: string; url: string; rss?: string; categories: string[] }) => blog.rss)
+    .map(
+      (blog: {
+        name: string;
+        url: string;
+        rss?: string;
+        categories: string[];
+      }) => blog.rss
+    )
     .filter((rss: string | undefined) => rss);
   const communityRssUrls = sources.communities
-    .map((community: { name: string; url: string; rss?: string; categories: string[] }) => community.rss)
+    .map(
+      (community: {
+        name: string;
+        url: string;
+        rss?: string;
+        categories: string[];
+      }) => community.rss
+    )
     .filter((rss: string | undefined) => rss);
 
   const feedUrls = [...blogRssUrls, ...communityRssUrls];
@@ -156,17 +170,24 @@ Respond with a JSON array of scores (one per article, in order):
 
       const scores = JSON.parse(jsonText);
 
-      scores.forEach((score: { index: number; score: number; reasoning: string; suggestedSection?: string }) => {
-        const article = batch[score.index];
-        if (article) {
-          scoredArticles.push({
-            ...article,
-            score: score.score,
-            reasoning: score.reasoning,
-            suggestedSection: score.suggestedSection
-          });
+      scores.forEach(
+        (score: {
+          index: number;
+          score: number;
+          reasoning: string;
+          suggestedSection?: string;
+        }) => {
+          const article = batch[score.index];
+          if (article) {
+            scoredArticles.push({
+              ...article,
+              score: score.score,
+              reasoning: score.reasoning,
+              suggestedSection: score.suggestedSection
+            });
+          }
         }
-      });
+      );
     } catch (error) {
       console.error('Error scoring batch:', error);
     }
