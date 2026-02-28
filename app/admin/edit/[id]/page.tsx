@@ -6,6 +6,11 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { Newsletter, NewsletterSection } from '@/types/database';
 
+const truncateText = (text: string, maxLength: number = 350): string => {
+  if (text.length <= maxLength) return text;
+  return text.substring(0, maxLength).trim() + '...';
+};
+
 export default function EditNewsletterPage() {
   const router = useRouter();
   const params = useParams();
@@ -21,11 +26,6 @@ export default function EditNewsletterPage() {
     isDeleting: false,
     message: ''
   });
-
-  const truncateText = (text: string, maxLength: number = 350): string => {
-    if (text.length <= maxLength) return text;
-    return text.substring(0, maxLength).trim() + '...';
-  };
 
   const loadNewsletter = useCallback(async () => {
     try {
