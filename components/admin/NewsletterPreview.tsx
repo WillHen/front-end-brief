@@ -37,9 +37,7 @@ export default function NewsletterPreview({
             className='border-b border-zinc-200 dark:border-zinc-800 pb-6'
           >
             <div className='flex items-start gap-3'>
-              <div className='text-2xl'>
-                {SECTION_ICONS[section.type]}
-              </div>
+              <div className='text-2xl'>{SECTION_ICONS[section.type]}</div>
               <div>
                 <h3 className='text-xl font-semibold text-zinc-900 dark:text-zinc-100 mb-2'>
                   {section.title || 'Untitled'}

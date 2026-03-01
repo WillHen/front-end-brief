@@ -3,7 +3,11 @@ import { NewsletterSection } from '@/types/database';
 interface SectionEditorProps {
   section: NewsletterSection;
   index: number;
-  onUpdate: (index: number, field: keyof NewsletterSection, value: string) => void;
+  onUpdate: (
+    index: number,
+    field: keyof NewsletterSection,
+    value: string
+  ) => void;
   onRemove: (index: number) => void;
   onAnalyzeUrl?: (index: number, url: string | undefined) => void;
   isAnalyzing?: boolean;
