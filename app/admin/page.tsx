@@ -44,7 +44,10 @@ type AdminAction =
   | { type: 'SET_SENDING'; payload: boolean }
   | { type: 'SET_MESSAGE'; payload: string }
   | { type: 'AUTH_SUCCESS'; payload: Newsletter[] }
-  | { type: 'UPDATE_SECTION'; payload: { index: number; field: keyof NewsletterSection; value: string } }
+  | {
+      type: 'UPDATE_SECTION';
+      payload: { index: number; field: keyof NewsletterSection; value: string };
+    }
   | { type: 'REMOVE_SECTION'; payload: number }
   | { type: 'ADD_SECTION' };
 
@@ -75,14 +78,26 @@ function adminReducer(state: AdminState, action: AdminAction): AdminState {
     case 'AUTH_SUCCESS':
       return { ...state, isAuthenticated: true, newsletters: action.payload };
     case 'ADD_SECTION':
-      return { ...state, sections: [...state.sections, { type: 'article', title: '', description: '', url: '' }] };
+      return {
+        ...state,
+        sections: [
+          ...state.sections,
+          { type: 'article', title: '', description: '', url: '' }
+        ]
+      };
     case 'UPDATE_SECTION': {
       const updated = [...state.sections];
-      updated[action.payload.index] = { ...updated[action.payload.index], [action.payload.field]: action.payload.value };
+      updated[action.payload.index] = {
+        ...updated[action.payload.index],
+        [action.payload.field]: action.payload.value
+      };
       return { ...state, sections: updated };
     }
     case 'REMOVE_SECTION':
-      return { ...state, sections: state.sections.filter((_, i) => i !== action.payload) };
+      return {
+        ...state,
+        sections: state.sections.filter((_, i) => i !== action.payload)
+      };
     default:
       return state;
   }
@@ -105,17 +120,25 @@ const initialState: AdminState = {
 export default function AdminPage() {
   const [state, dispatch] = useReducer(adminReducer, initialState);
   const {
-    isAuthenticated, password, authError, newsletters, isCreating,
-    title, sections, isPreview, isSaving, isSending, message
+    isAuthenticated,
+    password,
+    authError,
+    newsletters,
+    isCreating,
+    title,
+    sections,
+    isPreview,
+    isSaving,
+    isSending,
+    message
   } = state;
 
   const fetcher = (url: string) => fetch(url).then((res) => res.json());
 
   // Only fetch newsletters when authenticated
-  const { data: fetchedNewsletters, mutate: mutateNewsletters } = useSWR<Newsletter[]>(
-    isAuthenticated ? '/api/admin/newsletters' : null,
-    fetcher
-  );
+  const { data: fetchedNewsletters, mutate: mutateNewsletters } = useSWR<
+    Newsletter[]
+  >(isAuthenticated ? '/api/admin/newsletters' : null, fetcher);
 
   // Sync SWR data into reducer state
   useEffect(() => {
@@ -151,10 +174,16 @@ export default function AdminPage() {
         sessionStorage.setItem('admin_auth', 'true');
         dispatch({ type: 'SET_AUTHENTICATED', payload: true });
       } else {
-        dispatch({ type: 'SET_AUTH_ERROR', payload: data.error || 'Incorrect password' });
+        dispatch({
+          type: 'SET_AUTH_ERROR',
+          payload: data.error || 'Incorrect password'
+        });
       }
     } catch {
-      dispatch({ type: 'SET_AUTH_ERROR', payload: 'Authentication failed. Please try again.' });
+      dispatch({
+        type: 'SET_AUTH_ERROR',
+        payload: 'Authentication failed. Please try again.'
+      });
     }
   };
 
@@ -186,7 +215,10 @@ export default function AdminPage() {
       });
 
       if (response.ok) {
-        dispatch({ type: 'SET_MESSAGE', payload: 'Newsletter saved successfully!' });
+        dispatch({
+          type: 'SET_MESSAGE',
+          payload: 'Newsletter saved successfully!'
+        });
         await mutateNewsletters();
         dispatch({ type: 'SET_CREATING', payload: false });
       } else {
@@ -221,10 +253,16 @@ export default function AdminPage() {
       const data = await response.json();
 
       if (response.ok) {
-        dispatch({ type: 'SET_MESSAGE', payload: `Newsletter sent successfully to ${data.sent} subscribers!` });
+        dispatch({
+          type: 'SET_MESSAGE',
+          payload: `Newsletter sent successfully to ${data.sent} subscribers!`
+        });
         await mutateNewsletters();
       } else {
-        dispatch({ type: 'SET_MESSAGE', payload: data.error || 'Failed to send newsletter' });
+        dispatch({
+          type: 'SET_MESSAGE',
+          payload: data.error || 'Failed to send newsletter'
+        });
       }
     } catch {
       dispatch({ type: 'SET_MESSAGE', payload: 'Error sending newsletter' });
@@ -248,7 +286,9 @@ export default function AdminPage() {
             <input
               type='password'
               value={password}
-              onChange={(e) => dispatch({ type: 'SET_PASSWORD', payload: e.target.value })}
+              onChange={(e) =>
+                dispatch({ type: 'SET_PASSWORD', payload: e.target.value })
+              }
               placeholder='Enter password'
               className='w-full px-4 py-3 rounded-lg border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-100 mb-4'
             />
@@ -318,14 +358,19 @@ export default function AdminPage() {
           {!isPreview ? (
             <div className='space-y-6'>
               <div>
-                <label htmlFor='newsletter-title' className='block text-sm font-medium text-zinc-900 dark:text-zinc-100 mb-2'>
+                <label
+                  htmlFor='newsletter-title'
+                  className='block text-sm font-medium text-zinc-900 dark:text-zinc-100 mb-2'
+                >
                   Newsletter Title
                 </label>
                 <input
                   id='newsletter-title'
                   type='text'
                   value={title}
-                  onChange={(e) => dispatch({ type: 'SET_TITLE', payload: e.target.value })}
+                  onChange={(e) =>
+                    dispatch({ type: 'SET_TITLE', payload: e.target.value })
+                  }
                   placeholder='e.g., Front-end Brief - Week of Feb 1, 2026'
                   className='w-full px-4 py-3 rounded-lg border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-100'
                 />
@@ -346,7 +391,11 @@ export default function AdminPage() {
 
                 {sections.map((section, index) => (
                   <div
-                    key={section.title ? `edit-${section.type}-${section.title}` : `edit-new-${sections.indexOf(section)}`}
+                    key={
+                      section.title
+                        ? `edit-${section.type}-${section.title}`
+                        : `edit-new-${sections.indexOf(section)}`
+                    }
                     className='mb-4 p-4 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-lg'
                   >
                     <div className='flex justify-between items-start mb-3'>
@@ -416,7 +465,11 @@ export default function AdminPage() {
               <div className='space-y-6'>
                 {sections.map((section) => (
                   <div
-                    key={section.title ? `preview-${section.type}-${section.title}` : `preview-new-${sections.indexOf(section)}`}
+                    key={
+                      section.title
+                        ? `preview-${section.type}-${section.title}`
+                        : `preview-new-${sections.indexOf(section)}`
+                    }
                     className='border-b border-zinc-200 dark:border-zinc-800 pb-6'
                   >
                     <div className='flex items-start gap-3'>

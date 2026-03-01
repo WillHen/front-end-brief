@@ -35,9 +35,16 @@ export default function UnsubscribeContent() {
     : isLoading
       ? { status: 'loading' as const, message: '' }
       : error
-        ? { status: 'error' as const, message: error.message || 'An error occurred. Please try again later.' }
+        ? {
+            status: 'error' as const,
+            message:
+              error.message || 'An error occurred. Please try again later.'
+          }
         : data
-          ? { status: 'success' as const, message: 'You have been successfully unsubscribed.' }
+          ? {
+              status: 'success' as const,
+              message: 'You have been successfully unsubscribed.'
+            }
           : { status: 'loading' as const, message: '' };
 
   return (
@@ -62,7 +69,9 @@ export default function UnsubscribeContent() {
               <h1 className='text-2xl font-bold text-zinc-900 dark:text-zinc-100 mb-2'>
                 Unsubscribed
               </h1>
-              <p className='text-zinc-600 dark:text-zinc-400 mb-6'>{state.message}</p>
+              <p className='text-zinc-600 dark:text-zinc-400 mb-6'>
+                {state.message}
+              </p>
               <p className='text-sm text-zinc-500 dark:text-zinc-500 mb-6'>
                 We&apos;re sorry to see you go! You won&apos;t receive any more
                 newsletters from us.
@@ -82,7 +91,9 @@ export default function UnsubscribeContent() {
               <h1 className='text-2xl font-bold text-zinc-900 dark:text-zinc-100 mb-2'>
                 Error
               </h1>
-              <p className='text-zinc-600 dark:text-zinc-400 mb-6'>{state.message}</p>
+              <p className='text-zinc-600 dark:text-zinc-400 mb-6'>
+                {state.message}
+              </p>
               <Link
                 href='/'
                 className='inline-block px-6 py-3 bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 rounded-lg font-medium hover:bg-zinc-800 dark:hover:bg-zinc-200 transition-colors'
