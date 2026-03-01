@@ -2,9 +2,10 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import Link from 'next/link';
-import Image from 'next/image';
 import { NewsletterSection } from '@/types/database';
+import AdminHeader from '@/components/admin/AdminHeader';
+import SectionEditor from '@/components/admin/SectionEditor';
+import NewsletterPreview from '@/components/admin/NewsletterPreview';
 
 // Helper function to get default newsletter title
 const getDefaultTitle = () => {
@@ -31,11 +32,6 @@ export default function NewNewsletterPage() {
     new Set()
   );
   const [isDiscovering, setIsDiscovering] = useState(false);
-
-  const truncateText = (text: string, maxLength: number = 350): string => {
-    if (text.length <= maxLength) return text;
-    return text.substring(0, maxLength).trim() + '...';
-  };
 
   const addSection = () => {
     setState((prev) => ({
@@ -167,25 +163,7 @@ export default function NewNewsletterPage() {
 
   return (
     <div className='min-h-screen bg-zinc-50 dark:bg-zinc-950'>
-      <header className='w-full border-b border-zinc-200 dark:border-zinc-800 bg-white dark:bg-black'>
-        <div className='mx-auto max-w-7xl px-6 py-4 flex justify-between items-center'>
-          <Link href='/admin' className='flex items-center'>
-            <Image
-              src='/logo.svg'
-              alt='Front-end Brief'
-              width={250}
-              height={60}
-              className='h-10 w-auto'
-            />
-          </Link>
-          <Link
-            href='/admin'
-            className='text-sm text-zinc-600 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-100'
-          >
-            Back to List
-          </Link>
-        </div>
-      </header>
+      <AdminHeader />
 
       <main className='mx-auto max-w-4xl px-6 py-8'>
         {state.message && (
@@ -263,72 +241,19 @@ export default function NewNewsletterPage() {
               </div>
 
               {state.sections.map((section, index) => (
-                <div
+                <SectionEditor
                   key={
                     section.title
                       ? `edit-${section.type}-${section.title}`
-                      : `edit-new-${state.sections.indexOf(section)}`
+                      : `edit-new-${index}`
                   }
-                  className='mb-4 p-4 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-lg'
-                >
-                  <div className='flex justify-between items-start mb-3'>
-                    <select
-                      value={section.type}
-                      onChange={(e) =>
-                        updateSection(index, 'type', e.target.value)
-                      }
-                      className='px-3 py-2 rounded border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100'
-                    >
-                      <option value='article'>📚 Article</option>
-                      <option value='tip'>💡 Tip</option>
-                      <option value='tool'>🛠️ Tool</option>
-                      <option value='text'>✍️ Text</option>
-                    </select>
-                    <button
-                      onClick={() => removeSection(index)}
-                      className='text-red-600 hover:text-red-800 text-sm'
-                    >
-                      Remove
-                    </button>
-                  </div>
-                  <input
-                    type='text'
-                    value={section.title}
-                    onChange={(e) =>
-                      updateSection(index, 'title', e.target.value)
-                    }
-                    placeholder='Section title'
-                    className='w-full px-3 py-2 mb-2 rounded border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100'
-                  />
-                  <textarea
-                    value={section.description}
-                    onChange={(e) =>
-                      updateSection(index, 'description', e.target.value)
-                    }
-                    placeholder='Description'
-                    rows={3}
-                    className='w-full px-3 py-2 mb-2 rounded border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100'
-                  />
-                  <div className='flex gap-2'>
-                    <input
-                      type='url'
-                      value={section.url}
-                      onChange={(e) =>
-                        updateSection(index, 'url', e.target.value)
-                      }
-                      placeholder='URL (optional)'
-                      className='flex-1 px-3 py-2 rounded border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100'
-                    />
-                    <button
-                      type='button'
-                      onClick={() => analyzeUrl(index, section.url)}
-                      disabled={!section.url || analyzingIndexes.has(index)}
-                      className='px-4 py-2 bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 rounded text-sm font-medium hover:bg-zinc-800 dark:hover:bg-zinc-200 disabled:opacity-50 disabled:cursor-not-allowed'
-                    >
-                      {analyzingIndexes.has(index) ? '...' : '✨ Analyze'}
-                    </button>
-                  </div>
-                </div>
+                  section={section}
+                  index={index}
+                  onUpdate={updateSection}
+                  onRemove={removeSection}
+                  onAnalyzeUrl={analyzeUrl}
+                  isAnalyzing={analyzingIndexes.has(index)}
+                />
               ))}
             </div>
 
@@ -341,51 +266,7 @@ export default function NewNewsletterPage() {
             </button>
           </div>
         ) : (
-          <div className='bg-white dark:bg-zinc-900 p-8 rounded-lg border border-zinc-200 dark:border-zinc-800'>
-            <h2 className='text-3xl font-bold text-zinc-900 dark:text-zinc-100 mb-6'>
-              {state.title || 'Untitled Newsletter'}
-            </h2>
-            <div className='space-y-6'>
-              \n{' '}
-              {state.sections.map((section) => (
-                <div
-                  key={
-                    section.title
-                      ? `preview-${section.type}-${section.title}`
-                      : `preview-new-${state.sections.indexOf(section)}`
-                  }
-                  className='border-b border-zinc-200 dark:border-zinc-800 pb-6'
-                >
-                  <div className='flex items-start gap-3'>
-                    <div className='text-2xl'>
-                      {section.type === 'article' && '📚'}
-                      {section.type === 'tip' && '💡'}
-                      {section.type === 'tool' && '🛠️'}
-                      {section.type === 'text' && '✍️'}
-                    </div>
-                    <div>
-                      <h3 className='text-xl font-semibold text-zinc-900 dark:text-zinc-100 mb-2'>
-                        {section.title || 'Untitled'}
-                      </h3>
-                      {section.description && (
-                        <p className='text-zinc-600 dark:text-zinc-400 mb-2 text-[15px] leading-[1.5]'>
-                          {truncateText(section.description)}
-                        </p>
-                      )}
-                      {section.url && (
-                        <a
-                          href={section.url}
-                          className='text-zinc-900 dark:text-zinc-100 hover:underline'
-                        >
-                          Read more →
-                        </a>
-                      )}
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
+          <NewsletterPreview title={state.title} sections={state.sections} />
         )}
       </main>
     </div>
