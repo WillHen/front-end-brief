@@ -1,47 +1,44 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import useSWR from 'swr';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
+
+const unsubscribeFetcher = async (token: string) => {
+  const response = await fetch('/api/unsubscribe', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ token })
+  });
+
+  const data = await response.json();
+
+  if (!response.ok) {
+    throw new Error(data.error || 'Failed to unsubscribe. Please try again.');
+  }
+
+  return data;
+};
 
 export default function UnsubscribeContent() {
   const searchParams = useSearchParams();
   const token = searchParams.get('token');
 
-  const [state, setState] = useState<{
-    status: 'loading' | 'success' | 'error';
-    message: string;
-  }>({ status: 'loading', message: '' });
+  const { data, error, isLoading } = useSWR(
+    token ? ['unsubscribe', token] : null,
+    ([, t]) => unsubscribeFetcher(t),
+    { revalidateOnFocus: false, revalidateOnReconnect: false }
+  );
 
-  useEffect(() => {
-    const unsubscribe = async () => {
-      if (!token) {
-        setState({ status: 'error', message: 'Invalid unsubscribe link' });
-        return;
-      }
-      try {
-        const response = await fetch('/api/unsubscribe', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({ token })
-        });
-
-        const data = await response.json();
-
-        if (response.ok) {
-          setState({ status: 'success', message: 'You have been successfully unsubscribed.' });
-        } else {
-          setState({ status: 'error', message: data.error || 'Failed to unsubscribe. Please try again.' });
-        }
-      } catch {
-        setState({ status: 'error', message: 'An error occurred. Please try again later.' });
-      }
-    };
-
-    unsubscribe();
-  }, [token]);
+  const state = !token
+    ? { status: 'error' as const, message: 'Invalid unsubscribe link' }
+    : isLoading
+      ? { status: 'loading' as const, message: '' }
+      : error
+        ? { status: 'error' as const, message: error.message || 'An error occurred. Please try again later.' }
+        : data
+          ? { status: 'success' as const, message: 'You have been successfully unsubscribed.' }
+          : { status: 'loading' as const, message: '' };
 
   return (
     <div className='min-h-screen bg-zinc-50 dark:bg-zinc-950 flex items-center justify-center px-6'>

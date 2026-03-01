@@ -1,6 +1,7 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState } from 'react';
+import useSWR from 'swr';
 import { useRouter, useParams } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
@@ -16,51 +17,35 @@ export default function EditNewsletterPage() {
   const params = useParams();
   const newsletterId = params.id as string;
 
+  const fetcher = (url: string) => fetch(url).then((res) => res.json());
+
+  const { data: newsletters, error: fetchError } = useSWR<Newsletter[]>(
+    '/api/admin/newsletters',
+    fetcher
+  );
+
+  const newsletter = newsletters?.find((n) => n.id === newsletterId) ?? null;
+  const loading = !newsletters && !fetchError;
+
   const [state, setState] = useState({
-    newsletter: null as Newsletter | null,
-    loading: true,
     title: '',
     sections: [] as NewsletterSection[],
     isPreview: false,
     isSaving: false,
     isDeleting: false,
-    message: ''
+    message: '',
+    initialized: false
   });
 
-  const loadNewsletter = useCallback(async () => {
-    try {
-      const response = await fetch('/api/admin/newsletters');
-      const data = await response.json();
-      const found = data.find((n: Newsletter) => n.id === newsletterId);
-
-      if (found) {
-        setState((prev) => ({
-          ...prev,
-          newsletter: found,
-          title: found.title,
-          sections: found.content,
-          loading: false
-        }));
-      } else {
-        setState((prev) => ({
-          ...prev,
-          message: 'Newsletter not found',
-          loading: false
-        }));
-      }
-    } catch (err) {
-      console.error('Failed to load newsletter:', err);
-      setState((prev) => ({
-        ...prev,
-        message: 'Error loading newsletter',
-        loading: false
-      }));
-    }
-  }, [newsletterId]);
-
-  useEffect(() => {
-    loadNewsletter();
-  }, [loadNewsletter]);
+  // Sync fetched data into local editable state once
+  if (newsletter && !state.initialized) {
+    setState((prev) => ({
+      ...prev,
+      title: newsletter.title,
+      sections: newsletter.content,
+      initialized: true
+    }));
+  }
 
   const addSection = () => {
     setState((prev) => ({
@@ -155,7 +140,7 @@ export default function EditNewsletterPage() {
     }
   };
 
-  if (state.loading) {
+  if (loading) {
     return (
       <div className='min-h-screen bg-zinc-50 dark:bg-zinc-950 flex items-center justify-center'>
         <p className='text-zinc-600 dark:text-zinc-400'>Loading...</p>
@@ -163,12 +148,12 @@ export default function EditNewsletterPage() {
     );
   }
 
-  if (!state.newsletter) {
+  if (fetchError || (!loading && !newsletter)) {
     return (
       <div className='min-h-screen bg-zinc-50 dark:bg-zinc-950 flex items-center justify-center'>
         <div className='text-center'>
           <p className='text-zinc-900 dark:text-zinc-100 mb-4'>
-            Newsletter not found
+            {fetchError ? 'Error loading newsletter' : 'Newsletter not found'}
           </p>
           <Link
             href='/admin'

@@ -1,6 +1,7 @@
 'use client';
 
-import { useReducer, useEffect, useCallback } from 'react';
+import { useReducer, useEffect } from 'react';
+import useSWR from 'swr';
 import Link from 'next/link';
 import { Newsletter, NewsletterSection } from '@/types/database';
 
@@ -108,28 +109,28 @@ export default function AdminPage() {
     title, sections, isPreview, isSaving, isSending, message
   } = state;
 
-  const loadNewsletters = useCallback(async () => {
-    try {
-      const response = await fetch('/api/admin/newsletters');
-      const data = await response.json();
-      return Array.isArray(data) ? data : [];
-    } catch (err) {
-      console.error('Failed to load newsletters:', err);
-      return [];
+  const fetcher = (url: string) => fetch(url).then((res) => res.json());
+
+  // Only fetch newsletters when authenticated
+  const { data: fetchedNewsletters, mutate: mutateNewsletters } = useSWR<Newsletter[]>(
+    isAuthenticated ? '/api/admin/newsletters' : null,
+    fetcher
+  );
+
+  // Sync SWR data into reducer state
+  useEffect(() => {
+    if (fetchedNewsletters) {
+      dispatch({ type: 'SET_NEWSLETTERS', payload: fetchedNewsletters });
+    }
+  }, [fetchedNewsletters]);
+
+  // Check authentication on mount
+  useEffect(() => {
+    const auth = sessionStorage.getItem('admin_auth');
+    if (auth === 'true') {
+      dispatch({ type: 'SET_AUTHENTICATED', payload: true });
     }
   }, []);
-
-  // Check authentication
-  useEffect(() => {
-    const checkAuth = async () => {
-      const auth = sessionStorage.getItem('admin_auth');
-      if (auth === 'true') {
-        const data = await loadNewsletters();
-        dispatch({ type: 'AUTH_SUCCESS', payload: data });
-      }
-    };
-    checkAuth();
-  }, [loadNewsletters]);
 
   const handleAuth = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -148,8 +149,7 @@ export default function AdminPage() {
 
       if (response.ok) {
         sessionStorage.setItem('admin_auth', 'true');
-        const newsletterData = await loadNewsletters();
-        dispatch({ type: 'AUTH_SUCCESS', payload: newsletterData });
+        dispatch({ type: 'SET_AUTHENTICATED', payload: true });
       } else {
         dispatch({ type: 'SET_AUTH_ERROR', payload: data.error || 'Incorrect password' });
       }
@@ -187,8 +187,7 @@ export default function AdminPage() {
 
       if (response.ok) {
         dispatch({ type: 'SET_MESSAGE', payload: 'Newsletter saved successfully!' });
-        const data = await loadNewsletters();
-        dispatch({ type: 'SET_NEWSLETTERS', payload: data });
+        await mutateNewsletters();
         dispatch({ type: 'SET_CREATING', payload: false });
       } else {
         dispatch({ type: 'SET_MESSAGE', payload: 'Failed to save newsletter' });
@@ -223,8 +222,7 @@ export default function AdminPage() {
 
       if (response.ok) {
         dispatch({ type: 'SET_MESSAGE', payload: `Newsletter sent successfully to ${data.sent} subscribers!` });
-        const newsletterData = await loadNewsletters();
-        dispatch({ type: 'SET_NEWSLETTERS', payload: newsletterData });
+        await mutateNewsletters();
       } else {
         dispatch({ type: 'SET_MESSAGE', payload: data.error || 'Failed to send newsletter' });
       }
