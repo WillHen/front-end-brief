@@ -1,15 +1,18 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { checkRateLimit } from '@/lib/rate-limit';
+import { verifyPassword, createToken, COOKIE_NAME } from '@/lib/auth';
 
+/**
+ * POST /api/admin/auth — Login
+ * Verifies the password and sets an HTTP-only JWT cookie.
+ */
 export async function POST(request: NextRequest) {
   try {
-    // Get IP address for rate limiting
     const ip =
       request.headers.get('x-forwarded-for') ||
       request.headers.get('x-real-ip') ||
       'unknown';
 
-    // Rate limit: 5 attempts per 15 minutes per IP
     if (!checkRateLimit(`auth:${ip}`, 5, 15 * 60 * 1000)) {
       return NextResponse.json(
         { error: 'Too many login attempts. Please try again in 15 minutes.' },
@@ -26,21 +29,52 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Check against environment variable
-    const adminPassword = process.env.ADMIN_PASSWORD;
+    // Support both ADMIN_PASSWORD_HASH (preferred) and ADMIN_PASSWORD (legacy)
+    const storedPassword =
+      process.env.ADMIN_PASSWORD_HASH ?? process.env.ADMIN_PASSWORD;
 
-    if (password === adminPassword) {
-      return NextResponse.json({ success: true });
-    } else {
+    if (!storedPassword) {
+      return NextResponse.json(
+        { error: 'Server misconfiguration' },
+        { status: 500 }
+      );
+    }
+
+    const isValid = await verifyPassword(password, storedPassword);
+
+    if (!isValid) {
       return NextResponse.json(
         { error: 'Incorrect password' },
         { status: 401 }
       );
     }
+
+    const token = await createToken();
+
+    const response = NextResponse.json({ success: true });
+    response.cookies.set(COOKIE_NAME, token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax',
+      path: '/',
+      maxAge: 60 * 60 * 24, // 24 hours
+    });
+
+    return response;
   } catch {
     return NextResponse.json(
       { error: 'Authentication failed' },
       { status: 500 }
     );
   }
+}
+
+/**
+ * DELETE /api/admin/auth — Logout
+ * Clears the JWT cookie.
+ */
+export async function DELETE() {
+  const response = NextResponse.json({ success: true });
+  response.cookies.delete(COOKIE_NAME);
+  return response;
 }

@@ -65,7 +65,7 @@ async function fetchArticles(): Promise<Article[]> {
         categories: string[];
       }) => blog.rss
     )
-    .filter((rss: string | undefined) => rss);
+    .filter((rss: string | undefined): rss is string => Boolean(rss));
   const communityRssUrls = sources.communities
     .map(
       (community: {
@@ -75,7 +75,7 @@ async function fetchArticles(): Promise<Article[]> {
         categories: string[];
       }) => community.rss
     )
-    .filter((rss: string | undefined) => rss);
+    .filter((rss: string | undefined): rss is string => Boolean(rss));
 
   const feedUrls = [...blogRssUrls, ...communityRssUrls];
 
@@ -183,7 +183,7 @@ Respond with a JSON array of scores (one per article, in order):
               ...article,
               score: score.score,
               reasoning: score.reasoning,
-              suggestedSection: score.suggestedSection
+              suggestedSection: (score.suggestedSection as ScoredArticle['suggestedSection']) ?? 'article'
             });
           }
         }

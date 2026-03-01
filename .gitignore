@@ -47,3 +47,4 @@ scripts/output/
 # supabase
 supabase/.branches
 supabase/.temp
+.env.example
