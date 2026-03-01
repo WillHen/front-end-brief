@@ -30,7 +30,7 @@ function LoginForm() {
       const response = await fetch('/api/admin/auth', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ password }),
+        body: JSON.stringify({ password })
       });
 
       if (response.ok) {

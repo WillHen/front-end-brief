@@ -183,7 +183,9 @@ Respond with a JSON array of scores (one per article, in order):
               ...article,
               score: score.score,
               reasoning: score.reasoning,
-              suggestedSection: (score.suggestedSection as ScoredArticle['suggestedSection']) ?? 'article'
+              suggestedSection:
+                (score.suggestedSection as ScoredArticle['suggestedSection']) ??
+                'article'
             });
           }
         }

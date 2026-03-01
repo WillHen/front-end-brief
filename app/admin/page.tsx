@@ -38,9 +38,7 @@ export default function AdminPage() {
       const data = await response.json();
 
       if (response.ok) {
-        setMessage(
-          `Newsletter sent successfully to ${data.sent} subscribers!`
-        );
+        setMessage(`Newsletter sent successfully to ${data.sent} subscribers!`);
         await mutateNewsletters();
       } else {
         setMessage(data.error || 'Failed to send newsletter');

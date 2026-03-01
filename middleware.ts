@@ -5,7 +5,7 @@ const COOKIE_NAME = 'admin_token';
 
 /** Routes the middleware will run on. */
 export const config = {
-  matcher: ['/admin/:path*', '/api/admin/:path*'],
+  matcher: ['/admin/:path*', '/api/admin/:path*']
 };
 
 function getSecret(): Uint8Array {
@@ -20,10 +20,7 @@ export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
   // Always allow the login page and the auth API (login/logout endpoints)
-  if (
-    pathname === '/admin/login' ||
-    pathname === '/api/admin/auth'
-  ) {
+  if (pathname === '/admin/login' || pathname === '/api/admin/auth') {
     return NextResponse.next();
   }
 
