@@ -8,8 +8,12 @@ import AdminHeader from '@/components/admin/AdminHeader';
 
 const fetcher = (url: string) => fetch(url).then((res) => res.json());
 
+type NewsLetterSendingStatus = 'idle' | 'sending' | 'sent' | 'error';
+
+type NewsLetterMap = { [id: string]: NewsLetterSendingStatus };
+
 export default function AdminPage() {
-  const [isSending, setIsSending] = useState(false);
+  const [isSending, setIsSending] = useState<NewsLetterMap>({});
   const [message, setMessage] = useState('');
 
   const { data: newsletters = [], mutate: mutateNewsletters } = useSWR<
@@ -25,7 +29,7 @@ export default function AdminPage() {
       return;
     }
 
-    setIsSending(true);
+    setIsSending((prev) => ({ ...prev, [id]: 'sending' }));
     setMessage('');
 
     try {
@@ -46,7 +50,7 @@ export default function AdminPage() {
     } catch {
       setMessage('Error sending newsletter');
     } finally {
-      setIsSending(false);
+      setIsSending((prev) => ({ ...prev, [id]: 'idle' }));
     }
   };
 
@@ -101,10 +105,12 @@ export default function AdminPage() {
                   {newsletter.status === 'draft' && (
                     <button
                       onClick={() => handleSend(newsletter.id)}
-                      disabled={isSending}
+                      disabled={isSending[newsletter.id] === 'sending'}
                       className='px-4 py-2 text-sm bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 rounded-lg hover:bg-zinc-800 dark:hover:bg-zinc-200 disabled:opacity-50'
                     >
-                      {isSending ? 'Sending...' : 'Send'}
+                      {isSending[newsletter.id] === 'sending'
+                        ? 'Sending...'
+                        : 'Send'}
                     </button>
                   )}
                 </div>
